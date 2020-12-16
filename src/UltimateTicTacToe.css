@@ -1,4 +1,4 @@
-.ultimateTickTacToe-board{
+.ultimateTicTacToe-board{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: auto;
@@ -12,7 +12,7 @@
     margin: auto;
 }
 
-.tickTacToe-board {
+.ticTacToe-board {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: auto;

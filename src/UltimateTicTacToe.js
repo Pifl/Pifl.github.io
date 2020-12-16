@@ -1,5 +1,5 @@
 import React from 'react';
-import './ParentBoard.css';
+import './UltimateTicTacToe.css';
 
 class Square extends React.Component {
 
@@ -45,7 +45,7 @@ class Square extends React.Component {
     }
 }
 
-function TickTacToeBoard(props) {
+function TicTacToeBoard(props) {
     let active = props.parent === props.active;
     let style = {
         border: "medium rgba(0, 0, 0, 0) solid"
@@ -53,52 +53,49 @@ function TickTacToeBoard(props) {
     if (active) {
         style.border = "medium green dashed"
     }
-    return (<div className="tickTacToe-board" style={style}>
+    return (<div className="ticTacToe-board" style={style}>
         {props.squares.map((square, index) => <Square key={index} parent={props.parent} index={index} handleClick={props.handleClick} value={square} xIsNext={props.xIsNext}/>)}
     </div>)
 }
 
 function ParentBoard(props) {
     return (props.squares.map((square, index) => 
-    <TickTacToeBoard key={index} parent={index} handleClick={props.handleClick} squares={square}  xIsNext={props.xIsNext} active={props.active}/>))
+    <TicTacToeBoard key={index} parent={index} handleClick={props.handleClick} squares={square}  xIsNext={props.xIsNext} active={props.active}/>))
 
 }
 
-class HistoryBoard extends React.Component {
+function HistoryBoard(props) {
+    let squares = Array(81).fill(null);
+    props.squares.forEach((element, index) => {
+        element.forEach((square, sIndex) => {
+            let a = (sIndex % 3) + (index % 3) * 3;
+            let b = Math.floor(sIndex / 3) + Math.floor(index / 3) * 3;        
+            let newIndex = (b * 9) + a;
+            squares[newIndex] = square;
+        })
+    });
+    
+    const opacity = props.position + 0.2; 
 
-    render() {
-        let squares = Array(81).fill(null);
-        this.props.squares.forEach((element, index) => {
-            element.forEach((square, sIndex) => {
-                let a = (sIndex % 3) + (index % 3) * 3;
-                let b = Math.floor(sIndex / 3) + Math.floor(index / 3) * 3;        
-                let newIndex = (b * 9) + a;
-                squares[newIndex] = square;
-            })
-        });
-        
-        const opacity = this.props.position + 0.2; 
-
-        return(<div onClick={this.props.onClick} className="history-board">
-            {squares.map((element, index) => {
-                let style = {
-                    border: "thin black solid",
-                    backgroundColor: "",
-                    opacity: opacity
-                }
-                if (element === "X") {
-                    style.backgroundColor = "red"
-                } else if (element === "O") {
-                    style.backgroundColor = "blue"
-                } else {
-                    style.backgroundColor = "";
-                }
-                return (<div key={index} style={style}></div>)})}
-        </div>)
-    }
+    return(<div onClick={props.onClick} className="history-board">
+        {squares.map((element, index) => {
+            let style = {
+                border: "thin black solid",
+                backgroundColor: "",
+                opacity: opacity
+            }
+            if (element === "X") {
+                style.backgroundColor = "red"
+            } else if (element === "O") {
+                style.backgroundColor = "blue"
+            } else {
+                style.backgroundColor = "";
+            }
+            return (<div key={index} style={style}></div>)})}
+    </div>)
 }
 
-class UltimateTickTacToe extends React.Component {
+class UltimateTicTacToe extends React.Component {
 
     constructor(props) {
         super(props);
@@ -167,7 +164,6 @@ class UltimateTickTacToe extends React.Component {
     }
 
     handleClick(parent, child){
-        console.log(parent, child)
         const history = this.state.history;
         const current = history[history.length - 1];
         const squares = deepSlice(current.squares);
@@ -228,23 +224,23 @@ class UltimateTickTacToe extends React.Component {
         }
         let count = Math.min(this.state.maxCount, history.length);
         return (
-            <div className="ultimateTickTacToe">
+            <div className="ultimateTicTacToe">
                 <div className="infobox">
                     <div style={statusStyle} className="status">
                         {statusText}
                     </div>
                 </div>
-                <div className="ultimateTickTacToe-board">
+                <div className="ultimateTicTacToe-board">
                     <ParentBoard squares={squares} handleClick={(i , j) => this.handleClick(i, j)} xIsNext={current.xIsNext} active={current.active}/>
                 </div>
-                <div className="ultimateTickTacToe-history">
+                <div className="ultimateTicTacToe-history">
                     {history.slice(-count).map((element, index) => <HistoryBoard key={index} onClick={() => this.rewind(index)} position={index/count} squares={element.squares}/>)}
                 </div>
             </div>
         );
     }
     
-}export default UltimateTickTacToe 
+}export default UltimateTicTacToe 
 
 function deepSlice(array){
     return array.slice().map( function(row){ return row.slice(); });
